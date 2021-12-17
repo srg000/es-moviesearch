@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>电影-搜索引擎</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+
+<body class="pg">
+<div class="page" id="app">
+    <div id="mallPage" class=" mallist tmall- page-not-market ">
+
+        <!-- 头部搜索 -->
+        <div id="header" class=" header-list-app">
+            <div class="headerLayout">
+                <div class="headerCon ">
+                    <!-- Logo-->
+                    <h1 id="mallLogo">
+                        <img style="margin-top: -25px;width: 101px;height: 33px;margin-left: 10px"
+                             src="https://www.baidu.com/img/flexible/logo/pc/result.png" alt="">
+                    </h1>
+
+                    <div class="header-extra">
+
+                        <!--搜索-->
+                        <div id="mallSearch" class="mall-search">
+                            <form name="searchTop" class="mallSearch-form clearfix">
+                                <fieldset>
+                                    <legend>电影搜索</legend>
+                                    <div class="mallSearch-input clearfix">
+                                        <div class="s-combobox" id="s-combobox-685">
+                                            <div class="s-combobox-input-wrap">
+                                                <input  v-model="keyword" type="text" autocomplete="off" value=""
+                                                       id="mq"
+                                                       class="s-combobox-input" aria-haspopup="true">
+
+                                            </div>
+                                        </div>
+                                        <button type="submit" @click.prevent="searchKey" id="searchbtn">搜索</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商品详情页面 -->
+        <div id="content">
+            <div class="main">
+                <!-- 品牌分类 -->
+                <form class="navAttrsForm">
+                    <div class="attrs j_NavAttrs" style="display:block">
+                        <div class="brandAttr j_nav_brand">
+                            <div class="j_Brand attr">
+                                <div class="attrKey">
+                                    技术栈
+                                </div>
+                                <div class="attrValues">
+                                    <ul class="av-collapse row-2">
+                                        <li><a href="#"> ELK </a></li>
+                                        <li><a href="#"> Java </a></li>
+                                        <li><a href="#"> vue </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+
+                <!-- 商品详情 -->
+                <div class="view grid-nosku">
+
+                    <div class="product" v-for="result in results">
+                        <div class="product-iWrap">
+
+                            <p class="productPrice">
+                                <a :href="result.url" style="color: blue; margin-left: 5px; ">
+                                    <span v-html="result.name" style="font-size: 18px"></span>
+                                    <span style="font-size: 18px"> - 豆瓣电影</span>
+                                </a>
+
+                            </p>
+
+                            <!--商品封面-->
+                            <div class="productImg-wrap">
+                                <div>
+                                    <a class="productImg" :href="result.url">
+                                        <img style="width: 142px; height: 210px" :src="result.img">
+                                    </a>
+                                </div>
+                                <div style="width: 77%" class="movieInfo">
+
+                                    <div class="info">
+                                        <strong>导演: </strong>&nbsp;&nbsp;
+                                        <span>{{result.xinxi}}</span>
+                                    </div>
+
+                                    <div class="info">
+                                        <strong>简介: </strong>&nbsp;&nbsp;
+                                        <span v-html="result.about"></span>
+                                    </div>
+
+
+                                    <div class="info">
+                                        <strong>获奖: </strong>&nbsp;&nbsp;
+                                        <span>{{result.awards}}</span>
+                                    </div>
+
+                                    <div class="info">
+                                        <strong >评分: </strong>&nbsp;&nbsp;
+                                        <span>{{result.score}}</span>
+                                    </div>
+
+                                    <div class="info">
+                                        <strong>评价人数: </strong>&nbsp;&nbsp;
+                                        <span>{{result.scorePeople}}</span> 人
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/axios.min.js}"></script>
+    <script th:src="@{/js/vue.min.js}"></script>
+    <script>
+
+        new Vue({
+            el: '#app',
+            data: {
+                keyword: '',
+                results: []
+            },
+            created() {
+                var keyword = ""
+
+                keyword = window.localStorage.getItem('keyword')
+                if (keyword == "") {
+                    keyword = "null"
+                }
+                axios.get('movies/getMovieByName/' + keyword).then(response => {
+                    console.log(response)
+                    this.results = response.data;
+                })
+            },
+            methods: {
+                searchKey() {
+                    var keyword = this.keyword;
+                    console.log(keyword);
+                    if (keyword == "") {
+                        keyword = "null"
+                    }
+
+                    axios.get('movies/getMovieByName/' + keyword).then(response => {
+                        console.log(response)
+                        this.results = response.data;
+                    })
+                },
+
+            }
+
+        })
+    </script>
+
+</body>
+</html>
